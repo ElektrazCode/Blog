@@ -4,17 +4,28 @@ const express = require('express'); //import express package - pulls it from the
 const path = require('path'); //import path core module which ensures the correct reference to a directory regardless of the OS.
 const ejs = require('ejs');
 const app = new express(); //calls the express function to start a new express app and saves it in a variable
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const BlogPost = require('./models/BlogPost.js');
+const DB_STRING = "mongodb+srv://moi:tusaisquoi@cluster0.xnon6sd.mongodb.net/?retryWrites=true&w=majority"  //saving the DB connection string in a variable
 
-app.use(express.static('public')); //
 // const homePage = fs.readFileSync('index.html');  //read index.html file and store it in a variable
 // const aboutPage = fs.readFileSync('about.html'); //read about.html file and store it in a variable
 // const contactPage = fs.readFileSync('contact.html'); //read contact.html file and store it in a variable
 // const notFoundPage = fs.readFileSync('notfound.html'); //read notfound.html file and store it in a variable
+
+mongoose.connect(DB_STRING, {useNewUrlParser:true});
+
+app.use(express.static('public')); //
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.set('view engine', 'ejs');
 //
-app.get('/', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
+app.get('/', async (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
     // res.sendFile(path.resolve(__dirname, 'pages/index.html')); //res.sendFile('index.js') will throw an error cause need a full path
-    res.render('index');
+    const blogposts = await BlogPost.find({});
+    res.render('index', { blogposts });
 })
 
 app.get('/about', (req, res)=>{ //Calls the handler callback function after the request for '/about' comes in 
@@ -30,6 +41,15 @@ app.get('/contact', (req, res)=>{  //Calls the handler callback function after t
 app.get('/post', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
     // res.sendFile(path.resolve(__dirname, 'pages/post.html')); //res.sendFile('index.js') will throw an error cause need a full path
     res.render('post');
+})
+
+app.get('/posts/new', (req, res)=> {
+    res.render('create');
+});
+
+app.post('/posts/store', async (req, res)=>{
+    await BlogPost.create(req.body);
+    res.redirect('/');
 })
 // const server = http.createServer((req, res) => {  //create a server with the createServer method of the http package and assign it to the variable server. That method takes in a callback function with 2 objects as arguments: the request from the browser and the response sent back to the browser
 //     if(req.url === '/about')
