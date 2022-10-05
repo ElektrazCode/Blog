@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const BlogPost = require('./models/BlogPost.js');
 const DB_STRING = "mongodb+srv://moi:tusaisquoi@cluster0.xnon6sd.mongodb.net/?retryWrites=true&w=majority"  //saving the DB connection string in a variable
+const fileUpload = require('express-fileupload');    //Adds the files property to the request object to access uploaded file with req.files
 
 // const homePage = fs.readFileSync('index.html');  //read index.html file and store it in a variable
 // const aboutPage = fs.readFileSync('about.html'); //read about.html file and store it in a variable
@@ -16,9 +17,11 @@ const DB_STRING = "mongodb+srv://moi:tusaisquoi@cluster0.xnon6sd.mongodb.net/?re
 
 mongoose.connect(DB_STRING, {useNewUrlParser:true});
 
+app.use(fileUpload());             //register the package in express
 app.use(express.static('public')); //
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 app.set('view engine', 'ejs');
 //
@@ -38,18 +41,30 @@ app.get('/contact', (req, res)=>{  //Calls the handler callback function after t
     res.render('contact');
 })
 
-app.get('/post', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
+app.get('/post/:id', async(req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
     // res.sendFile(path.resolve(__dirname, 'pages/post.html')); //res.sendFile('index.js') will throw an error cause need a full path
-    res.render('post');
+    const blogpost = await BlogPost.findById(req.params.id);
+    res.render('post', { blogpost });
 })
 
 app.get('/posts/new', (req, res)=> {
     res.render('create');
 });
 
+app.post('/posts/search', async (req, res)=> {
+    const keyword = new RegExp(req.body.keyword, 'i');
+    const blogposts = await BlogPost.find({title: keyword});
+    res.render('index', { blogposts });
+});
+
 app.post('/posts/store', async (req, res)=>{
-    await BlogPost.create(req.body);
-    res.redirect('/');
+    console.log(req.files);
+    console.log(req.image);
+    const image = req.files.image;                    //mv method moves the file elsewhere on the server and names it
+    image.mv(path.resolve(__dirname, 'public/assets/img', image.name), async (error)=>{
+        await BlogPost.create({...req.body, image:'/assets/img/'+ image.name});
+        res.redirect('/');
+    })
 })
 // const server = http.createServer((req, res) => {  //create a server with the createServer method of the http package and assign it to the variable server. That method takes in a callback function with 2 objects as arguments: the request from the browser and the response sent back to the browser
 //     if(req.url === '/about')
