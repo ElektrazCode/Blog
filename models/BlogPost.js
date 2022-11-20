@@ -11,4 +11,6 @@ const BlogPostSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('BlogPost', BlogPostSchema);
+
+module.exports = mongoose.model('BlogPost', BlogPostSchema);  //we access the database through mongoose.model, first argument is the name of the collection and the second argument is the schema
+//exporting the model makes it accessible to other files.
