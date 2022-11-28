@@ -22,20 +22,18 @@ app.get('/', async (req, res)=>{  //Calls the handler callback function after th
 })
 
 // app.get('/about', (req, res)=>{ //Calls the handler callback function after the request for '/about' comes in 
-//     // res.sendFile(path.resolve(__dirname, 'pages/about.html')); //res.sendFile('index.js') will throw an error cause need a full path
 //     res.render('about');
 // })
 
 // app.get('/contact', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
-//     // res.sendFile(path.resolve(__dirname, 'pages/contact.html')); //res.sendFile('index.js') will throw an error cause need a full path
 //     res.render('contact');
 // })
 
-// app.get('/post/:id', async(req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
-//     // res.sendFile(path.resolve(__dirname, 'pages/post.html')); //res.sendFile('index.js') will throw an error cause need a full path
-//     const blogpost = await BlogPost.findById(req.params.id);
-//     res.render('post', { blogpost });
-// })
+//Go to specific post's page
+app.get('/post/:id', async(req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
+    const blogpost = await BlogPost.findById(req.params.id);
+    res.render('post', { blogpost });
+})
 
 //Go to page to create a new post
 app.get('/posts/new', (req, res)=> {
