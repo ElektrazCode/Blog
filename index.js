@@ -21,13 +21,13 @@ app.get('/', async (req, res)=>{  //Calls the handler callback function after th
     res.render('index', { blogposts });
 })
 
-// app.get('/about', (req, res)=>{ //Calls the handler callback function after the request for '/about' comes in 
-//     res.render('about');
-// })
+app.get('/about', (req, res)=>{ //Calls the handler callback function after the request for '/about' comes in 
+    res.render('about');
+})
 
-// app.get('/contact', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
-//     res.render('contact');
-// })
+app.get('/contact', (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
+    res.render('contact');
+})
 
 //Go to specific post's page
 app.get('/post/:id', async(req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
@@ -43,10 +43,6 @@ app.get('/posts/new', (req, res)=> {
 //Save a new post into DB and redirect to main page
 app.post('/posts/store', async (req, res)=>{
     console.log(req.body);
-    //instead of using a callback inside a callback we can use async await
-    //BlogPost.create(req.body, (error, blogpost)=>{     
-        //res.redirect('/');  
-    //}); 
     await BlogPost.create((req.body));  //Creates a new document in DB and Saves the post data in it
     res.redirect('/');                  //Express adds the redirect method to the response object for convenience, with only Node it will need a lot more code
 });
@@ -67,3 +63,8 @@ app.post('/posts/search', async (req, res)=> {
 // })
 
 app.listen(4000, () => console.log("App listening on port 4000"));
+
+//instead of using a callback inside a callback we can use async await
+    //BlogPost.create(req.body, (error, blogpost)=>{     
+        //res.redirect('/');  
+    //}); 
