@@ -8,13 +8,21 @@ const bodyParser = require('body-parser'); //
 const fileUpload = require('express-fileupload');    //Adds the files property to the request object to access uploaded file with req.files
 const BlogPost = require('./models/BlogPost');
 
+const validateMiddleware = (req, res, next)=>{
+    if(req.files == null || req.body.title == null || req.body.body == null)
+        return res.redirect('/posts/new');
+    next();                    //required to tell Express to proceed to the next middleware function
+};
+
 mongoose.connect(DB_STRING, {useNewUrlParser:true});
 app.set('view engine', 'ejs');
 
 app.use(express.static('public')); //specifying location of static assets in the public folder
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(fileUpload());             //register the package in express
+app.use(fileUpload());             //register the package/middleware in express
+//app.use(validateMiddleware);       //will be executed for all requests.
+app.use('/posts/store', validateMiddleware); //will be only executed when executing a posts/store request (creating a new post).
 
 app.get('/', async (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
     const blogposts = await BlogPost.find({});
@@ -42,7 +50,7 @@ app.get('/posts/new', (req, res)=> {
 
 //Save a new post into DB and redirect to main page
 app.post('/posts/store', async (req, res)=>{
-    if (!req.files || Object.keys(req.files).length === 0) {
+    if (!req.files || Object.keys(req.files).length === 0) {   //handle no files
         await BlogPost.create((req.body));
     }
     else{
@@ -60,14 +68,6 @@ app.post('/posts/search', async (req, res)=> {
     res.render('index', { blogposts });
 });
 
-// app.post('/posts/store', async (req, res)=>{
-//    console.log(req.files.image);
-//    const image = req.files.image;                    
-//     image.mv(path.resolve(__dirname, 'public/assets/img', image.name), async (error)=>{
-//         await BlogPost.create({...req.body, image:'/assets/img/'+ image.name});
-//         res.redirect('/');
-//     })
-// })
 
 app.listen(4000, () => console.log("App listening on port 4000"));
 
