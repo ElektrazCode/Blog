@@ -8,7 +8,6 @@ const bodyParser = require('body-parser'); //
 const BlogPost = require('./models/BlogPost');
 
 mongoose.connect(DB_STRING, {useNewUrlParser:true});
-console.log('Connected to DB!');
 app.set('view engine', 'ejs');
 
 app.use(express.static('public')); //specifying location of static assets in the public folder
@@ -18,7 +17,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', async (req, res)=>{  //Calls the handler callback function after the request for '/' comes in 
     const blogposts = await BlogPost.find({});
-    console.log(blogposts);
+    console.log("Here are the posts: ", blogposts);
     res.render('index', { blogposts });
 })
 
@@ -38,20 +37,27 @@ app.get('/', async (req, res)=>{  //Calls the handler callback function after th
 //     res.render('post', { blogpost });
 // })
 
+//Go to page to create a new post
 app.get('/posts/new', (req, res)=> {
     res.render('create');
 });
 
-app.post('/posts/store', (req, res)=>{
+//Save a new post into DB and redirect to main page
+app.post('/posts/store', async (req, res)=>{
     console.log(req.body);
-    res.redirect('/');
+    //instead of using a callback inside a callback we can use async await
+    //BlogPost.create(req.body, (error, blogpost)=>{     
+        //res.redirect('/');  
+    //}); 
+    await BlogPost.create((req.body));  //Creates a new document in DB and Saves the post data in it
+    res.redirect('/');                  //Express adds the redirect method to the response object for convenience, with only Node it will need a lot more code
 });
 
-// app.post('/posts/search', async (req, res)=> {
-//     const keyword = new RegExp(req.body.keyword, 'i');
-//     const blogposts = await BlogPost.find({title: keyword});
-//     res.render('index', { blogposts });
-// });
+app.post('/posts/search', async (req, res)=> {
+    const keyword = new RegExp(req.body.keyword, 'i');
+    const blogposts = await BlogPost.find({title: keyword});
+    res.render('index', { blogposts });
+});
 
 // app.post('/posts/store', async (req, res)=>{
 //    console.log(req.files.image);
