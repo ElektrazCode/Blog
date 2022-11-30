@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const fileUpload = require('express-fileupload');
+const session = require('express-session');
 const newPostController = require('./controllers/newPost');
 const aboutController = require('./controllers/about');
 const contactController = require('./controllers/contact');
@@ -18,24 +19,26 @@ const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const validateMiddleware = require('./middleware/validateMiddlware');
+const authMiddleware = require('./middleware/authMiddleware');
 
 mongoose.connect(DB_STRING, {useNewUrlParser: true});
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
+app.use(session({ secret: 'keyboard cat' }));
 app.use('/posts/store', validateMiddleware);
 
 app.get('/', homeController);
 app.get('/about', aboutController);
 app.get('/contact', contactController);
 app.get('/post', sampleController);
-app.get('/posts/new', newPostController);
+app.get('/posts/new', authMiddleware, newPostController);
 app.get('/post/:id', getPostController);
 app.post('/posts/search', searchController);
-app.post('/posts/store', storePostController);
+app.post('/posts/store', authMiddleware, storePostController);
 app.get('/auth/register', newUserController);
 app.get('/auth/login', loginController);
 app.post('/users/register', storeUserController);
