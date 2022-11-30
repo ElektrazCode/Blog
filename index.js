@@ -14,8 +14,8 @@ const getPostController = require('./controllers/getPost');
 const searchController = require('./controllers/search');
 const storePostController = require('./controllers/storePost');
 const newUserController = require('./controllers/newUser');
-const validateMiddleware = require('./middleware/validateMiddlware');
 const storeUserController = require('./controllers/storeUser');
+const validateMiddleware = require('./middleware/validateMiddlware');
 
 mongoose.connect(DB_STRING, {useNewUrlParser: true});
 
