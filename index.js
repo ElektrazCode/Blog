@@ -20,6 +20,9 @@ const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const validateMiddleware = require('./middleware/validateMiddlware');
 const authMiddleware = require('./middleware/authMiddleware');
+const redirectMiddleware = require('./middleware/redirectIfAuthenticatedMiddleware');
+
+global.loggedIn = null;           //global variable that will be accessible from all other files.
 
 mongoose.connect(DB_STRING, {useNewUrlParser: true});
 
@@ -30,6 +33,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(session({ secret: 'keyboard cat' }));
 app.use('/posts/store', validateMiddleware);
+app.use('*', (req, res, next)=>{         //specifying * wildcard to be used on all requests.
+    loggedIn = req.session.userId;       //assigns the logged in user Id to the global variable loggedIn
+    next();
+});
 
 app.get('/', homeController);
 app.get('/about', aboutController);
@@ -39,9 +46,9 @@ app.get('/posts/new', authMiddleware, newPostController);
 app.get('/post/:id', getPostController);
 app.post('/posts/search', searchController);
 app.post('/posts/store', authMiddleware, storePostController);
-app.get('/auth/register', newUserController);
-app.get('/auth/login', loginController);
-app.post('/users/register', storeUserController);
-app.post('/users/login', loginUserController);
+app.get('/auth/register', redirectMiddleware, newUserController);
+app.get('/auth/login', redirectMiddleware, loginController);
+app.post('/users/register', redirectMiddleware, storeUserController);
+app.post('/users/login', redirectMiddleware, loginUserController);
 
 app.listen(4000, () => console.log("App listening on port 4000"));
