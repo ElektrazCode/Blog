@@ -13,7 +13,9 @@ const homeController = require('./controllers/home');
 const getPostController = require('./controllers/getPost');
 const searchController = require('./controllers/search');
 const storePostController = require('./controllers/storePost');
+const newUserController = require('./controllers/newUser');
 const validateMiddleware = require('./middleware/validateMiddlware');
+const storeUserController = require('./controllers/storeUser');
 
 mongoose.connect(DB_STRING, {useNewUrlParser: true});
 
@@ -32,5 +34,7 @@ app.get('/posts/new', newPostController);
 app.get('/post/:id', getPostController);
 app.post('/posts/search', searchController);
 app.post('/posts/store', storePostController);
+app.get('/auth/register', newUserController);
+app.post('/users/register', storeUserController);
 
 app.listen(4000, () => console.log("App listening on port 4000"));
