@@ -18,6 +18,7 @@ const newUserController = require('./controllers/newUser');
 const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
+const logoutController = require('./controllers/logout');
 const validateMiddleware = require('./middleware/validateMiddlware');
 const authMiddleware = require('./middleware/authMiddleware');
 const redirectMiddleware = require('./middleware/redirectIfAuthenticatedMiddleware');
@@ -48,6 +49,7 @@ app.post('/posts/search', searchController);
 app.post('/posts/store', authMiddleware, storePostController);
 app.get('/auth/register', redirectMiddleware, newUserController);
 app.get('/auth/login', redirectMiddleware, loginController);
+app.get('/auth/logout', logoutController);
 app.post('/users/register', redirectMiddleware, storeUserController);
 app.post('/users/login', redirectMiddleware, loginUserController);
 
