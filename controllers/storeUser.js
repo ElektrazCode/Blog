@@ -3,9 +3,13 @@ const User = require('../models/User');
 
 module.exports = async (req, res) =>{
     await User.create(req.body, (error, user)=>{
-        console.log(error);
-        if (error)
+        if(error){
+            const validationErrors = Object.keys(error.errors).map(key=>error.errors[key].message);
+            req.session.validationErrors = validationErrors;
             res.redirect('/auth/register');
-        res.redirect('/');
+        }
+        else{
+            res.redirect('/');
+        }
     });
 };

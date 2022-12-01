@@ -25,7 +25,7 @@ const redirectMiddleware = require('./middleware/redirectIfAuthenticatedMiddlewa
 
 global.loggedIn = null;           //global variable that will be accessible from all other files.
 
-mongoose.connect(DB_STRING, {useNewUrlParser: true});
+mongoose.connect(DB_STRING, { useNewUrlParser: true });
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
