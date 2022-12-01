@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const fileUpload = require('express-fileupload');
 const session = require('express-session');
+const flash = require('connect-flash');
 const newPostController = require('./controllers/newPost');
 const aboutController = require('./controllers/about');
 const contactController = require('./controllers/contact');
@@ -32,6 +33,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
+app.use(flash());
 app.use(session({ secret: 'keyboard cat' }));
 app.use('/posts/store', validateMiddleware);
 app.use('*', (req, res, next)=>{         //specifying * wildcard to be used on all requests.
