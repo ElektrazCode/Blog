@@ -1,7 +1,7 @@
 module.exports = (req, res) => {
     let username = '';
     let password = '';
-    const data = req.flash('data')[0];
+    const data = req.flash('userData')[0];
 
     if(typeof data != "undefined"){
         username = data.username;
@@ -9,7 +9,7 @@ module.exports = (req, res) => {
     }
     //errors: req.session.validationErrors
     res.render('register', { 
-        errors: req.flash('validationErrors'), 
+        errors: req.flash('userValidationErrors'), 
         username: username,
         password: password
     });

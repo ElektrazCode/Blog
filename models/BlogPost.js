@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 
 const BlogPostSchema = new mongoose.Schema({
-    title: String,
-    body: String,
+    title: {
+        type: String,
+        required: [true, 'Please provide a blog title']
+    },
+    body: {
+        type: String,
+        required: [true, 'Please provide some content to the blog']
+    },
     username: String,
     image: String,
     datePosted: {

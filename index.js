@@ -20,7 +20,7 @@ const storeUserController = require('./controllers/storeUser');
 const loginController = require('./controllers/login');
 const loginUserController = require('./controllers/loginUser');
 const logoutController = require('./controllers/logout');
-const validateMiddleware = require('./middleware/validateMiddlware');
+// const validateMiddleware = require('./middleware/validateMiddlware');
 const authMiddleware = require('./middleware/authMiddleware');
 const redirectMiddleware = require('./middleware/redirectIfAuthenticatedMiddleware');
 
@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(flash());
 app.use(session({ secret: 'keyboard cat' }));
-app.use('/posts/store', validateMiddleware);
+// app.use('/posts/store', validateMiddleware);
 app.use('*', (req, res, next)=>{         //specifying * wildcard to be used on all requests.
     loggedIn = req.session.userId;       //assigns the logged in user Id to the global variable loggedIn
     next();
